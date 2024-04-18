@@ -1,30 +1,30 @@
 /*! NProgress (c) 2013, Rico Sta. Cruz
  *  http://ricostacruz.com/nprogress */
+const $ = require("jquery");
 
-;(function(factory) {
-
-  if (typeof module === 'function') {
-    module.exports = factory(this.jQuery || require('jquery'));
+(function(factory) {
+  if (typeof module === "function") {
+    module.exports = factory(this.jQuery || require("jquery"));
   } else {
     this.NProgress = factory(this.jQuery);
   }
-
-})(function($) {
+})(function() {
   var NProgress = {};
 
-  NProgress.version = '0.1.2';
+  NProgress.version = "0.1.2";
 
-  var Settings = NProgress.settings = {
+  var Settings = (NProgress.settings = {
     minimum: 0.08,
-    easing: 'ease',
-    positionUsing: '',
+    easing: "ease",
+    positionUsing: "",
     speed: 200,
     trickle: true,
     trickleRate: 0.02,
     trickleSpeed: 800,
     showSpinner: true,
-    template: '<div class="bar" role="bar"><div class="peg"></div></div><div class="spinner" role="spinner"><div class="spinner-icon"></div></div>'
-  };
+    template:
+      '<div class="bar" role="bar"><div class="peg"></div></div><div class="spinner" role="spinner"><div class="spinner-icon"></div></div>'
+  });
 
   /**
    * Updates configuration.
@@ -55,29 +55,33 @@
     var started = NProgress.isStarted();
 
     n = clamp(n, Settings.minimum, 1);
-    NProgress.status = (n === 1 ? null : n);
+    NProgress.status = n === 1 ? null : n;
 
     var $progress = NProgress.render(!started),
-        $bar      = $progress.find('[role="bar"]'),
-        speed     = Settings.speed,
-        ease      = Settings.easing;
+      $bar = $progress.find('[role="bar"]'),
+      speed = Settings.speed,
+      ease = Settings.easing;
 
     $progress[0].offsetWidth; /* Repaint */
 
     $progress.queue(function(next) {
       // Set positionUsing if it hasn't already been set
-      if (Settings.positionUsing === '') Settings.positionUsing = NProgress.getPositioningCSS();
-      
+      if (Settings.positionUsing === "")
+        Settings.positionUsing = NProgress.getPositioningCSS();
+
       // Add transition
       $bar.css(barPositionCSS(n, speed, ease));
 
       if (n === 1) {
         // Fade out
-        $progress.css({ transition: 'none', opacity: 1 });
+        $progress.css({ transition: "none", opacity: 1 });
         $progress[0].offsetWidth; /* Repaint */
 
         setTimeout(function() {
-          $progress.css({ transition: 'all '+speed+'ms linear', opacity: 0 });
+          $progress.css({
+            transition: "all " + speed + "ms linear",
+            opacity: 0
+          });
           setTimeout(function() {
             NProgress.remove();
             next();
@@ -92,7 +96,7 @@
   };
 
   NProgress.isStarted = function() {
-    return typeof NProgress.status === 'number';
+    return typeof NProgress.status === "number";
   };
 
   /**
@@ -146,7 +150,7 @@
     if (!n) {
       return NProgress.start();
     } else {
-      if (typeof amount !== 'number') {
+      if (typeof amount !== "number") {
         amount = (1 - n) * clamp(Math.random() * n, 0.1, 0.95);
       }
 
@@ -166,20 +170,18 @@
 
   NProgress.render = function(fromStart) {
     if (NProgress.isRendered()) return $("#nprogress");
-    $('html').addClass('nprogress-busy');
+    $("html").addClass("nprogress-busy");
 
-    var $el = $("<div id='nprogress'>")
-      .html(Settings.template);
+    var $el = $("<div id='nprogress'>").html(Settings.template);
 
-    var perc = fromStart ? '-100' : toBarPerc(NProgress.status || 0);
+    var perc = fromStart ? "-100" : toBarPerc(NProgress.status || 0);
 
     $el.find('[role="bar"]').css({
-      transition: 'all 0 linear',
-      transform: 'translate3d('+perc+'%,0,0)'
+      transition: "all 0 linear",
+      transform: "translate3d(" + perc + "%,0,0)"
     });
 
-    if (!Settings.showSpinner)
-      $el.find('[role="spinner"]').remove();
+    if (!Settings.showSpinner) $el.find('[role="spinner"]').remove();
 
     $el.appendTo(document.body);
 
@@ -191,8 +193,8 @@
    */
 
   NProgress.remove = function() {
-    $('html').removeClass('nprogress-busy');
-    $('#nprogress').remove();
+    $("html").removeClass("nprogress-busy");
+    $("#nprogress").remove();
   };
 
   /**
@@ -200,7 +202,7 @@
    */
 
   NProgress.isRendered = function() {
-    return ($("#nprogress").length > 0);
+    return $("#nprogress").length > 0;
   };
 
   /**
@@ -212,20 +214,26 @@
     var bodyStyle = document.body.style;
 
     // Sniff prefixes
-    var vendorPrefix = ('WebkitTransform' in bodyStyle) ? 'Webkit' :
-                       ('MozTransform' in bodyStyle) ? 'Moz' :
-                       ('msTransform' in bodyStyle) ? 'ms' :
-                       ('OTransform' in bodyStyle) ? 'O' : '';
+    var vendorPrefix =
+      "WebkitTransform" in bodyStyle
+        ? "Webkit"
+        : "MozTransform" in bodyStyle
+        ? "Moz"
+        : "msTransform" in bodyStyle
+        ? "ms"
+        : "OTransform" in bodyStyle
+        ? "O"
+        : "";
 
-    if (vendorPrefix + 'Perspective' in bodyStyle) {
+    if (vendorPrefix + "Perspective" in bodyStyle) {
       // Modern browsers with 3D support, e.g. Webkit, IE10
-      return 'translate3d';
-    } else if (vendorPrefix + 'Transform' in bodyStyle) {
+      return "translate3d";
+    } else if (vendorPrefix + "Transform" in bodyStyle) {
       // Browsers without 3D support, e.g. IE9
-      return 'translate';
+      return "translate";
     } else {
       // Browsers without translate() support, e.g. IE7-8
-      return 'margin';
+      return "margin";
     }
   };
 
@@ -248,7 +256,6 @@
     return (-1 + n) * 100;
   }
 
-
   /**
    * (Internal) returns the correct CSS for changing the bar's
    * position given an n percentage, and speed and ease from Settings
@@ -257,19 +264,18 @@
   function barPositionCSS(n, speed, ease) {
     var barCSS;
 
-    if (Settings.positionUsing === 'translate3d') {
-      barCSS = { transform: 'translate3d('+toBarPerc(n)+'%,0,0)' };
-    } else if (Settings.positionUsing === 'translate') {
-      barCSS = { transform: 'translate('+toBarPerc(n)+'%,0)' };
+    if (Settings.positionUsing === "translate3d") {
+      barCSS = { transform: "translate3d(" + toBarPerc(n) + "%,0,0)" };
+    } else if (Settings.positionUsing === "translate") {
+      barCSS = { transform: "translate(" + toBarPerc(n) + "%,0)" };
     } else {
-      barCSS = { 'margin-left': toBarPerc(n)+'%' };
+      barCSS = { "margin-left": toBarPerc(n) + "%" };
     }
 
-    barCSS.transition = 'all '+speed+'ms '+ease;
+    barCSS.transition = "all " + speed + "ms " + ease;
 
     return barCSS;
   }
 
   return NProgress;
 });
-
