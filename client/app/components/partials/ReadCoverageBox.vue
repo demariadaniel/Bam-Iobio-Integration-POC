@@ -48,8 +48,8 @@
 /* power scale */
 #zoom-buttons {
   position: absolute;
-  top: 10px;
-  left: 25px;
+  top: -40px;
+  right: 10px;
   cursor: pointer;
 }
 
