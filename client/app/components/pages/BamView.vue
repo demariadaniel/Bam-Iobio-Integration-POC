@@ -36,7 +36,7 @@
   }
 
   .file-name {
-    margin-bottom: -20px;
+    margin-bottom: 20px;
     padding: 0px 0px 0px 22px;
     font-size: 20px;
     color: rgb(110,110,110);
