@@ -77,7 +77,7 @@
   }
 
   section#middle {
-    margin-top: 25px;
+    margin-top: 250px;
     min-height: 600px;
   }
 
@@ -265,7 +265,7 @@
 
     <section id="top">
 
-      <div id="piechooser" class="panel" style="padding-top: 12px">
+      <div v-if="viewConfig.pieChooser" id="piechooser" class="panel" style="padding-top: 12px">
         <select @change="seqSelected" id="reference-select">
           <option value="all">all</option>
         </select>
@@ -275,7 +275,7 @@
           @setSelectedId="setSelectedSeq" />
       </div>
 
-      <read-coverage-box @removeBedFile="removeBedFile"
+      <read-coverage-box v-if="viewConfig.readCoverageBox" @removeBedFile="removeBedFile"
                          @processBedFile="openBedFile"
                          @addH37BedFile="addH37BedFile"
                          @addH38BedFile="addH38BedFile"
@@ -289,14 +289,14 @@
                          v-tooltip.top-center="{content: clinTooltip.genome_wide_coverage.content, show: clinTooltip.genome_wide_coverage.show, trigger: 'manual'}">
                          </read-coverage-box>
 
-      <reads-sampled-box @sampleMore="sampleMore" :totalReads="totalReads"></reads-sampled-box>
+      <reads-sampled-box v-if="viewConfig.readsSampledBox" @sampleMore="sampleMore" :totalReads="totalReads"></reads-sampled-box>
 
     </section>
 
     <section id="middle">
       <div id="percents" >
 
-        <percent-chart-box id="mapped_reads"
+        <percent-chart-box v-if="viewConfig.mappedReads" id="mapped_reads"
                            title="Mapped Reads"
                            modal-title="Mapped reads"
                            help-tooltip="Expect a value >90%"
@@ -336,7 +336,7 @@
           </div>
         </percent-chart-box>
 
-        <percent-chart-box id="forward_strands"
+        <percent-chart-box v-if="viewConfig.forwardStrands" id="forward_strands"
                            title="Forward Strand"
                            modal-title="Forward strand"
                            help-tooltip="Expect a value ~50%"
@@ -348,7 +348,7 @@
           </div>
         </percent-chart-box>
 
-        <percent-chart-box id="proper_pairs"
+        <percent-chart-box v-if="viewConfig.properPairs" id="proper_pairs"
                            title="Proper Pairs"
                            modal-title="Proper pairs"
                            help-tooltip="Expect a value >90%"
@@ -364,7 +364,7 @@
           </div>
         </percent-chart-box>
 
-        <percent-chart-box id="singletons"
+        <percent-chart-box v-if="viewConfig.singletons" id="singletons"
                            title="Singletons"
                            modal-title="Singletons"
                            help-tooltip="Expect a value <1%"
@@ -376,7 +376,7 @@
           </div>
         </percent-chart-box>
 
-        <percent-chart-box id="both_mates_mapped"
+        <percent-chart-box v-if="viewConfig.bothMatesMapped" id="both_mates_mapped"
                            title="Both Mates Mapped"
                            modal-title="Both mates mapped"
                            help-tooltip="Expect a value >90%"
@@ -389,7 +389,7 @@
         </percent-chart-box>
 
 
-        <percent-chart-box id="duplicates"
+        <percent-chart-box v-if="viewConfig.duplicates" id="duplicates"
                            title="Duplicates"
                            modal-title="Duplicates"
                            help-tooltip="Value depends on depth"
@@ -430,7 +430,7 @@
 
       </div>
 
-      <div id="distributions" >
+      <div id="distributions" v-if="viewConfig.mappingQualityDistribution" >
 
         <div id="read-coverage-distribution" class="distribution panel"
           v-tooltip.top-center="{content: clinTooltip.median_coverage.content, show: clinTooltip.median_coverage.show, trigger: 'manual'}">
@@ -568,6 +568,19 @@
 
   import { Bam } from '../../../js/bam.iobio.js/bam.iobio.js';
 
+  const defaultBamConfig = {
+  pieChooser: true,
+  readCoverageBox: true,
+  readsSampledBox: true,
+  mappedReads: true,
+  forwardStrands: true,
+  properPairs: true,
+  singletons: true,
+  bothMatesMapped: true,
+  duplicates: true,
+  mappingQualityDistribution: true,
+};
+
   export default {
     name: 'bam-view',
 
@@ -651,6 +664,8 @@
         }),
 
         coverageMean: 0,
+
+        viewConfig: defaultBamConfig,
       }
     },
 
@@ -980,6 +995,9 @@
       goBam: function (region) {
         $("#selectData").css("display", "none");
         $("#showData").css("visibility", "visible");
+
+        const bamConfig = JSON.parse(localStorage.getItem("bamConfig"));
+        if (bamConfig) this.viewConfig = bamConfig;
 
         let refIndex = 0;
 
