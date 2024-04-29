@@ -202,8 +202,10 @@ export default {
         .outerTickSize(4)
         .innerTickSize(8);
 
-      console.log("min", this.yAxisRange.min);
-      console.log("max", this.yAxisRange.max);
+      localStorage.setItem(
+        "bamFileStats",
+        JSON.stringify({ max: this.yAxisRange.max })
+      );
       this.yAxis(g);
     }
   },
