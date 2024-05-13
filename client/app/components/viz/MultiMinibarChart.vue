@@ -206,6 +206,7 @@ export default {
         "bamFileStats",
         JSON.stringify({ max: this.yAxisRange.max })
       );
+      window.stateUpdate();
       this.yAxis(g);
     }
   },
