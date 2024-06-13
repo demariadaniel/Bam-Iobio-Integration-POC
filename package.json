@@ -1,5 +1,5 @@
 {
-  "name": "bam.iobio",
+  "name": "bam.iobio.io.poc",
   "version": "1.0.0",
   "scripts": {
     "serve": "DEBUG=http nodemon --inspect=127.0.0.1:3001  --ignore client/ www.js",

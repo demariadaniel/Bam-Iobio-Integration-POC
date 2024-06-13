@@ -1,3 +1,5 @@
+///<reference path="../../index.d.ts" />
+
 // extending Thomas Down's original BAM js work
 
 import { Client } from "iobio-api-client";
